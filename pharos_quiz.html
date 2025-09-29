@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharos Network Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 18px;
+      margin-bottom: 15px;
+      animation: typing 2s steps(30, end);
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid #fff;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+    }
+    .option {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .option:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+    .selected {
+      background: black !important;
+      color: white !important;
+    }
+    .correct {
+      background: green !important;
+      color: white !important;
+    }
+    .wrong {
+      background: red !important;
+      color: white !important;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #ff9800;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e68900;
+      transform: scale(1.05);
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Pharos Network Quiz</h1>
+    <div id="quiz"></div>
+    <button id="nextBtn">Next</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is Pharos Network?",
+        options: ["A Game", "A Blockchain Project", "A Social App", "A Wallet"],
+        correct: 1
+      },
+      {
+        question: "What can you earn in Creators Arena?",
+        options: ["NFT", "SBT Minting Pass & Rewards", "Tokens Only", "Nothing"],
+        correct: 1
+      },
+      {
+        question: "Where must you tag in your tweet?",
+        options: ["@elonmusk", "@pharos_network", "@coinbase", "@binance"],
+        correct: 1
+      },
+      {
+        question: "What is required to join the event?",
+        options: ["Twitter Handle", "Telegram ID", "Phone Number", "Email"],
+        correct: 0
+      },
+      {
+        question: "Which score gives better rewards?",
+        options: ["<100", "≥100 / ≥250 / ≥400", "Only ≥1000", "None"],
+        correct: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+
+    const quiz = document.getElementById("quiz");
+    const nextBtn = document.getElementById("nextBtn");
+    const result = document.getElementById("result");
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      quiz.innerHTML = `
+        <div class="question">${q.question}</div>
+        <div class="options">
+          ${q.options.map((opt, i) => `
+            <div class="option" onclick="selectOption(this, ${i})">${opt}</div>
+          `).join('')}
+        </div>
+      `;
+      selectedOption = null;
+    }
+
+    function selectOption(element, index) {
+      const options = document.querySelectorAll(".option");
+      options.forEach(opt => opt.classList.remove("selected"));
+      element.classList.add("selected");
+      selectedOption = index;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (selectedOption === null) {
+        alert("Please select an option!");
+        return;
+      }
+      const q = quizData[currentQuestion];
+      const options = document.querySelectorAll(".option");
+      if (selectedOption === q.correct) {
+        score++;
+        options[selectedOption].classList.add("correct");
+      } else {
+        options[selectedOption].classList.add("wrong");
+        options[q.correct].classList.add("correct");
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+          loadQuestion();
+        } else {
+          quiz.innerHTML = "";
+          nextBtn.style.display = "none";
+          result.innerHTML = `🎉 You scored ${score} / ${quizData.length}`;
+        }
+      }, 1000);
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>
